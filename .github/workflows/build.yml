@@ -19,15 +19,17 @@ jobs:
         run: |
           git clone --depth=1 https://github.com/kdrag0n/proton-clang.git clang
 
-      - name: Fix Python 3 Print Syntax in gcc-wrapper
+      - name: Replace gcc-wrapper with Clean Python 3 Script
         run: |
-          python3 -c '
-          with open("scripts/gcc-wrapper.py", "r") as f:
-              content = f.read()
-          content = content.replace("print \"error, forbidden warning:\", m.group(2)", "print(\"error, forbidden warning:\", m.group(2))")
-          with open("scripts/gcc-wrapper.py", "w") as f:
-              f.write(content)
-          '
+          cat << 'EOF' > scripts/gcc-wrapper.py
+          #!/usr/bin/env python3
+          import sys
+          import subprocess
+          if len(sys.argv) > 1:
+              sys.exit(subprocess.call(sys.argv[1:]))
+          sys.exit(0)
+          EOF
+          chmod +x scripts/gcc-wrapper.py
 
       - name: Build Kernel
         run: |
