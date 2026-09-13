@@ -22,7 +22,7 @@ jobs:
       - name: Build Kernel
         run: |
           export PATH="$(pwd)/clang/bin:$PATH"
-          make O=out ARCH=arm64 caprip_defconfig
+          make O=out ARCH=arm64 vendor/caprip_defconfig
           make -j$(nproc --all) O=out ARCH=arm64 SUBARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=aarch64-linux-android-
 
       - name: Upload Kernel Artifact
