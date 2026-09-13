@@ -23,7 +23,8 @@ jobs:
         run: |
           export PATH="$(pwd)/clang/bin:$PATH"
           export KCONFIG_WARN_TO_STDERR=0
-          sed -i 's/\r//' drivers/input/touchscreen/hxchipset/Kconfig || true
+          # Disable the broken hxchipset kconfig completely to prevent error 1
+          rm -f drivers/input/touchscreen/hxchipset/Kconfig
           make O=out ARCH=arm64 vendor/caprip_defconfig
           make -j$(nproc --all) O=out ARCH=arm64 SUBARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=aarch64-linux-android-
 
