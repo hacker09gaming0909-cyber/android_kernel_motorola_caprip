@@ -24,7 +24,7 @@ jobs:
           export PATH="$(pwd)/clang/bin:$PATH"
           export KCONFIG_WARN_TO_STDERR=0
           
-          # Bypass gcc-wrapper.py completely so it never runs Python
+          # Bypass gcc-wrapper.py completely
           if [ -f "scripts/gcc-wrapper.py" ]; then
             mv scripts/gcc-wrapper.py scripts/gcc-wrapper.py.bak
             echo "#!/usr/bin/env python3" > scripts/gcc-wrapper.py
@@ -32,6 +32,9 @@ jobs:
             echo "sys.exit(0)" >> scripts/gcc-wrapper.py
             chmod +x scripts/gcc-wrapper.py
           fi
+          
+          # Fix Kconfig invalid option error by cleaning up init/Kconfig
+          sed -i '16d' init/Kconfig || true
           
           # Clean up broken touchscreen config references
           sed -i '/hxchipset/d' drivers/input/touchscreen/Kconfig || true
