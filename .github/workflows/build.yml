@@ -24,9 +24,8 @@ jobs:
           export PATH="$(pwd)/clang/bin:$PATH"
           export KCONFIG_WARN_TO_STDERR=0
           
-          # Fix Kconfig strict error checks for modern host tools
-          sed -i 's/-Werror//g' scripts/kconfig/Makefile || true
-          sed -i '/-Werror/d' scripts/Makefile.host || true
+          # Fix Python 3 print syntax error in gcc-wrapper.py
+          sed -i 's/print "error, forbidden warning:", m.group(2)/print("error, forbidden warning:", m.group(2))/g' scripts/gcc-wrapper.py || true
           
           # Clean up broken touchscreen config references
           sed -i '/hxchipset/d' drivers/input/touchscreen/Kconfig || true
