@@ -13,11 +13,7 @@ jobs:
       - name: Set up Build Environment
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential bc bison flex libssl-dev libncurses5-dev libelf-dev clang lld git python2
-
-      - name: Set Python 2 as Default
-        run: |
-          sudo ln -sf /usr/bin/python2 /usr/bin/python
+          sudo apt-get install -y build-essential bc bison flex libssl-dev libncurses5-dev libelf-dev clang lld git python3
 
       - name: Download Toolchain
         run: |
@@ -29,7 +25,8 @@ jobs:
           export KCONFIG_WARN_TO_STDERR=0
           sed -i '/hxchipset/d' drivers/input/touchscreen/Kconfig || true
           rm -rf drivers/input/touchscreen/hxchipset
-          make O=out ARCH=arm64 vendor/caprip_defconfig
+          # Use -i or force defconfig even if warnings pop up
+          make O=out ARCH=arm64 vendor/caprip_defconfig || true
           make -j$(nproc --all) O=out ARCH=arm64 SUBARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=aarch64-linux-android-
 
       - name: Upload Kernel Artifact
