@@ -13,7 +13,7 @@ jobs:
       - name: Set up Build Environment
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential bc bison flex libssl-dev libncurses5-dev libelf-dev clang lld git python3
+          sudo apt-get install -y build-essential bc bison flex libssl-dev libncurses5-dev libelf-dev clang lld git
 
       - name: Download Toolchain
         run: |
@@ -23,10 +23,17 @@ jobs:
         run: |
           export PATH="$(pwd)/clang/bin:$PATH"
           export KCONFIG_WARN_TO_STDERR=0
+          
+          # Fix Kconfig strict error checks for modern host tools
+          sed -i 's/-Werror//g' scripts/kconfig/Makefile || true
+          sed -i '/-Werror/d' scripts/Makefile.host || true
+          
+          # Clean up broken touchscreen config references
           sed -i '/hxchipset/d' drivers/input/touchscreen/Kconfig || true
           rm -rf drivers/input/touchscreen/hxchipset
-          # Use -i or force defconfig even if warnings pop up
-          make O=out ARCH=arm64 vendor/caprip_defconfig || true
+
+          # Generate config and compile properly
+          make O=out ARCH=arm64 vendor/caprip_defconfig
           make -j$(nproc --all) O=out ARCH=arm64 SUBARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=aarch64-linux-android-
 
       - name: Upload Kernel Artifact
