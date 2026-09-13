@@ -19,13 +19,20 @@ jobs:
         run: |
           git clone --depth=1 https://github.com/kdrag0n/proton-clang.git clang
 
+      - name: Fix Python 3 Print Syntax in gcc-wrapper
+        run: |
+          python3 -c '
+          with open("scripts/gcc-wrapper.py", "r") as f:
+              content = f.read()
+          content = content.replace("print \"error, forbidden warning:\", m.group(2)", "print(\"error, forbidden warning:\", m.group(2))")
+          with open("scripts/gcc-wrapper.py", "w") as f:
+              f.write(content)
+          '
+
       - name: Build Kernel
         run: |
           export PATH="$(pwd)/clang/bin:$PATH"
           export KCONFIG_WARN_TO_STDERR=0
-          
-          # Force python scripts to use python3 explicitly
-          find scripts/ -type f -name "*.py" -exec sed -i '1s|^#!(.*)python.*|#!/usr/bin/env python3|' {} + || true
           
           # Clean up broken touchscreen config references
           sed -i '/hxchipset/d' drivers/input/touchscreen/Kconfig || true
