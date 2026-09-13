@@ -22,8 +22,8 @@ jobs:
       - name: Build Kernel
         run: |
           export PATH="$(pwd)/clang/bin:$PATH"
-          make O=out ARCH=arm64 vendor/caprip_defconfig
-          make -j$(nproc --all) O=out ARCH=arm64 SUBARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=aarch64-linux-android-
+          make O=out ARCH=arm64 vendor/caprip_defconfig HOSTCFLAGS="-Wno-error"
+          make -j$(nproc --all) O=out ARCH=arm64 SUBARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=aarch64-linux-android- HOSTCFLAGS="-Wno-error"
 
       - name: Upload Kernel Artifact
         uses: actions/upload-artifact@v4
