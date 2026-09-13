@@ -24,7 +24,7 @@ jobs:
           export PATH="$(pwd)/clang/bin:$PATH"
           export KCONFIG_WARN_TO_STDERR=0
           
-          # Bypass or neutralize gcc-wrapper.py completely so it never runs Python
+          # Bypass gcc-wrapper.py completely so it never runs Python
           if [ -f "scripts/gcc-wrapper.py" ]; then
             mv scripts/gcc-wrapper.py scripts/gcc-wrapper.py.bak
             echo "#!/usr/bin/env python3" > scripts/gcc-wrapper.py
@@ -42,7 +42,7 @@ jobs:
           make -j$(nproc --all) O=out ARCH=arm64 SUBARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- CROSS_COMPILE=aarch64-linux-android-
 
       - name: Upload Kernel Artifact
-        uses: uploads/upload-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           name: Overclocked-Kernel
           path: out/arch/arm64/boot/Image.gz-dtb
